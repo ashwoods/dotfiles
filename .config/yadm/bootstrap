@@ -1,0 +1,69 @@
+#! /usr/bin/env bash
+
+# Enable xtrace if the DEBUG environment variable is set
+if [[ ${DEBUG-} =~ ^1|yes|true$ ]]; then
+    set -o xtrace # Trace the execution of the script (debug)
+fi
+
+# Only enable these shell behaviours if we're not being sourced
+# Approach via: https://stackoverflow.com/a/28776166/8787985
+if ! (return 0 2>/dev/null); then
+    # A better class of script...
+    set -o errexit  # Exit on most errors (see the manual)
+    set -o nounset  # Disallow expansion of unset variables
+    set -o pipefail # Use last non-zero exit code in a pipeline
+fi
+
+# Enable errtrace or the error trap handler will not work as expected
+set -o errtrace # Ensure the error trap handler is inherited
+
+system_type=$(uname -s)
+
+function install_homebrew() {
+  # install homebrew if it's missing
+  if ! command -v brew >/dev/null 2>&1; then
+    echo "Installing homebrew"
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    if [ "$system_type" = "Linux" ]; then
+       grep -qxF 'brew' "${HOME}/.profile" || echo 'eval "$(${HOME}/.linuxbrew/bin/brew shellenv)"' >> "${HOME}/.profile"
+       eval "$("${HOME}/".linuxbrew/bin/brew shellenv)"
+    fi
+    # always recommended to have a recent gcc
+    brew install gcc
+  fi
+
+}
+
+function install_brewfiles() {
+  if [ -f "$HOME/.Brewfile.common" ]; then
+    echo "Updating common bundle"
+    brew bundle --file "$HOME/.Brewfile.common"
+  fi
+  if [ -f "$HOME/.Brewfile" ] && [ "$system_type" = "Darwin" ]; then
+    echo "Updating mac bundle"
+    brew bundle --global
+  fi
+  fisher update
+}
+
+function install_spacevim() {
+  curl -sLf https://spacevim.org/install.sh | bash
+}
+
+function main() {
+    if [ $# -eq 0 ]; then
+      install_homebrew
+      install_brewfiles
+      install_spacevim
+    else
+      set -ex
+      "$@"
+    fi
+    
+}
+
+# Invoke main with args if not sourced
+# Approach via: https://stackoverflow.com/a/28776166/8787985
+if ! (return 0 2>/dev/null); then
+    main "$@"
+fi
