@@ -25,8 +25,8 @@ function install_homebrew() {
     echo "Installing homebrew"
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     if [ "$system_type" = "Linux" ]; then
-       grep -qxF 'brew' "${HOME}/.profile" || echo 'eval "$(${HOME}/.linuxbrew/bin/brew shellenv)"' >> "${HOME}/.profile"
-       eval "$("${HOME}/".linuxbrew/bin/brew shellenv)"
+       grep -qxF 'brew' "${HOME}/.profile" || echo 'eval "$($(which brew) shellenv)' >> "${HOME}/.profile"
+       eval "$("$(which brew)" shellenv)"
     fi
     # always recommended to have a recent gcc
     brew install gcc
