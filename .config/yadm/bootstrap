@@ -43,7 +43,7 @@ function install_brewfiles() {
     echo "Updating mac bundle"
     brew bundle --global
   fi
-  fisher update
+  fish -c "fisher update"
 }
 
 function install_spacevim() {
