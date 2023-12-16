@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+# Two stage recursive init script
+# curl https://dot.shashi.to/init.sh | bash -s 
+
 # Enable xtrace if the DEBUG environment variable is set
 if [[ ${DEBUG-} =~ ^1|yes|true$ ]]; then
     set -o xtrace # Trace the execution of the script (debug)
@@ -33,7 +36,6 @@ function install_homebrew() {
   brew install gcc
   brew install mas
   brew install yadm
-
 }
 
 function install_cryfs() {
@@ -46,43 +48,11 @@ function install_dotfiles {
   yadm clone git@github.com:ashwoods/dotfiles.git
 }
 
-function install_rust() {
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-}
-
-function install_brewfiles() {
-  if [ -f "$HOME/.Brewfile" ] && [ "$system_type" = "Darwin" ]; then
-    brew bundle --global
-  fi
-}
-
-function install_sudo_id() {
-  brew install artginzburg/tap/sudo-touchid
-  sudo brew services start sudo-touchid
-}
-
-function install_fish() {
-  brew install fish fisher
-  fish -c "fisher install jethrokuan/z PatrickF1/fzf.fish joseluisq/gitnow";
-}
-
-function install_spacevim() {
-  curl -sLf https://spacevim.org/install.sh | bash
-}
-
-function init() {
-  install_homebrew
-  install_cryfs
-  install_dotfiles
-}
-
 function main() {
     if [ $# -eq 0 ]; then
-      install_brewfiles
-      install_sudo_id
-      install_rust
-      install_fish
-      install_spacevim
+      install_homebrew
+      install_cryfs
+      install_dotfiles
     else
       set -ex
       "$@"
