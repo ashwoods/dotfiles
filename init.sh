@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-# Two stage recursive init script
+# Add the cryfs secret to the login keychain `security add-generic-password -s "cryfs-ssh" -a "ashwoods" -w`
 # curl https://dot.shashi.to/init.sh | bash -s 
 
 # Enable xtrace if the DEBUG environment variable is set
@@ -39,9 +39,11 @@ function install_homebrew() {
 }
 
 function install_cryfs() {
+  export CRYFS_FRONTEND=noninteractive
+  SECRET=$(security find-generic-password -s "cryfs-ssh" -a "ashwoods" -w)
   brew install --cask macfuse
   brew install cryfs/tap/cryfs
-  cryfs ~/Documents/.sync/ssh ~/.ssh
+  echo "$SECRET" | cryfs ~/Documents/.sync/ssh ~/.ssh
 }
 
 function install_dotfiles {
