@@ -39,7 +39,7 @@ function install_cryfs() {
   SECRET=$(security find-generic-password -s "cryfs-ssh" -a "ashwoods" -w)
   brew install --cask macfuse
   brew install cryfs/tap/cryfs
-  echo "$SECRET" | cryfs ~/Documents/.sync/ssh ~/.ssh
+  echo "$SECRET" | cryfs ~/Documents/Sync/ssh ~/.ssh
 }
 
 function install_dotfiles {
