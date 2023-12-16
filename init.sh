@@ -20,19 +20,14 @@ fi
 # Enable errtrace or the error trap handler will not work as expected
 set -o errtrace # Ensure the error trap handler is inherited
 
-system_type=$(uname -s)
-
 function install_homebrew() {
   # install homebrew if it's missing
   if ! command -v brew >/dev/null 2>&1; then
     echo "Installing homebrew"
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    if [ "$system_type" = "Linux" ]; then
-       grep -qxF 'brew' "${HOME}/.profile" || echo 'eval "$($(which brew) shellenv)' >> "${HOME}/.profile"
-       eval "$("$(which brew)" shellenv)"
-    fi
   fi
-    # always recommended to have a recent gcc
+  # always recommended to have a recent gcc
+  eval "$(/opt/homebrew/bin/brew shellenv)"
   brew install gcc
   brew install mas
   brew install yadm
