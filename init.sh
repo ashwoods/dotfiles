@@ -35,6 +35,7 @@ function install_homebrew() {
 
 function install_cryfs() {
   export CRYFS_FRONTEND=noninteractive
+  eval "$(/opt/homebrew/bin/brew shellenv)"
   SECRET=$(security find-generic-password -s "cryfs-ssh" -a "ashwoods" -w)
   brew install --cask macfuse
   brew install cryfs/tap/cryfs
